@@ -1,0 +1,144 @@
+#include <iostream>
+#include <string>
+using namespace std;
+const int maxlen = 20;
+//typedef char etype;
+template <class t>
+class stack{
+    int top;
+    t *arr;
+public:
+    stack(){
+        arr = new t[maxlen];
+        top = maxlen+1;
+    }    
+    bool empty(){
+        return top == maxlen+1;
+    }
+    t Top(){
+        return arr[top];
+    }
+    void push(t x){
+        top -= 1;
+        arr[top]=x;
+    }
+    t pop(){
+       return arr[top++];
+    }
+    void display(){
+        cout<<"[ ";
+        for(int i = top;i<=maxlen;i++){
+            cout<<arr[i]<<" ";
+        }
+        cout<<"]"<<endl;
+    }
+};
+void check_brackets(string s){
+    stack<char>st;
+    bool ok = true;
+    for(int i =0;i<s.size();i++){
+        if(s[i]=='}'||s[i]==']'||s[i]==')'){
+            if(st.empty())
+                ok = false;
+            else{
+            if(s[i]=='}' && st.Top() != '{')
+                ok = false;
+            if(s[i]==']' && st.Top() != '[')
+                ok = false;
+            if(s[i]==')' && st.Top() != '(')
+                ok = false;
+          st.pop();
+            }
+        }else{
+            if(s[i]=='('||s[i]=='{'||s[i]=='[')
+                st.push(s[i]);
+        }
+    }
+    if(!ok || !st.empty()){
+        cout << "The check_Brackets ---> Incorrect" << endl;
+  } else
+        cout << "The check_Brackets ---> Correct" << endl;
+}
+int postfix(char c[],int n){
+    stack<char> s;
+    for(int i = 0;i<n;i++){
+        if(isdigit(c[i]))
+            s.push(c[i]-'0');
+        else{
+            if(s.empty()){
+                cout<<"Error in Expression: \n";
+                return 0;
+            }
+            int a = s.pop();
+            
+            if(s.empty()){
+                cout<<"Error in Expression: \n";
+                return 0;
+            }
+            
+            int b = s.pop();  
+            
+            if(c[i]=='+')
+                s.push(a+b);
+            else if(c[i]=='-')
+                s.push(a-b);
+            else if(c[i]=='*')
+                s.push(a*b);
+            else if(c[i]=='/')
+                s.push(a/b);
+        }
+        
+    }
+        return s.pop();
+}
+void convert_dec_to_bin(int x){
+    stack<int> s;
+    int rem;
+    while(x!=0){
+        rem = x%2;
+        s.push(rem);
+        x/=2;
+    }
+    while(!s.empty())
+        cout<<s.pop();
+    cout<<endl;
+}
+stack<int> rearrange(stack<int> s){
+    stack<int> o,e;
+    while(!s.empty()){
+        int a = s.pop();
+        if(a%2==0)
+            e.push(a);
+        else 
+            o.push(a);
+    }
+    while(!o.empty())
+        e.push(o.pop());
+    return e;
+}
+int main() {
+    check_brackets("((( )(( )){([( )])}))");
+    check_brackets("(");
+    
+    char c[] = {'5','7','+','4','2','*','+' };
+    cout<<"postfix: "<<postfix(c,7)<<endl;
+    
+    cout<<"convert_dec_to_bin: ";
+    convert_dec_to_bin(10);
+    stack<int>s;
+    s.push(4);
+    s.push(3);
+    s.push(6);
+    s.push(7);
+    s.push(9);
+    s.push(1);
+    s.push(2);
+    stack <int> a = rearrange(s);
+    s.pop();
+    cout<<"Stack S: ";
+    s.display();
+    cout<<"rearrange: ";
+    a.display();
+	system("pause");
+    return 0;
+}
